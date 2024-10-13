@@ -46,26 +46,31 @@ filtered_data = data[(data['country'].isin(selected_country)) &
 # App Title
 st.title("Enhanced Customer Churn Dashboard")
 
-# Overview Section
+# Overview Section (Four Columns for Key Metrics)
 st.header("Overview")
+col1, col2, col3, col4 = st.columns(4)
+
 total_customers = filtered_data.shape[0]
 churn_rate = filtered_data['churn'].mean() * 100
 average_credit_score = filtered_data['credit_score'].mean()
 average_salary = filtered_data['estimated_salary'].mean()
 
-# Display key metrics
-st.metric(label="Total Filtered Customers", value=f"{total_customers}")
-st.metric(label="Churn Rate", value=f"{churn_rate:.2f}%")
-st.metric(label="Average Credit Score", value=f"{average_credit_score:.2f}")
-st.metric(label="Average Estimated Salary", value=f"${average_salary:,.2f}")
+# Display key metrics in four columns
+col1.metric(label="Total Filtered Customers", value=f"{total_customers}")
+col2.metric(label="Churn Rate", value=f"{churn_rate:.2f}%")
+col3.metric(label="Average Credit Score", value=f"{average_credit_score:.2f}")
+col4.metric(label="Average Estimated Salary", value=f"${average_salary:,.2f}")
 
-# Gender Distribution Pie Chart
+# Responsive Gender Distribution Pie Chart (Half Page Width)
 st.subheader("Gender Distribution")
 gender_counts = filtered_data['gender'].value_counts()
-fig1, ax1 = plt.subplots()
-ax1.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=90, colors=['#ff9999','#66b3ff'])
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-st.pyplot(fig1)
+col5, col6 = st.columns(2)
+
+with col5:
+    fig1, ax1 = plt.subplots(figsize=(5, 5))  # Adjust size for responsiveness
+    ax1.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=90, colors=['#ff9999','#66b3ff'])
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig1)
 
 # Churn by Country Bar Chart
 st.subheader("Churn by Country")
