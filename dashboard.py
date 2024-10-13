@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-data = pd.read_csv('/Bank Customer Churn Prediction - Bank Customer Churn Prediction.csv')
+data = pd.read_csv('Bank Customer Churn Prediction - Bank Customer Churn Prediction.csv')
 
 # Sidebar for filters
 st.sidebar.title("Filter Options")
