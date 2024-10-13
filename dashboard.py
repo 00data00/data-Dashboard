@@ -8,14 +8,40 @@ data = pd.read_csv('Bank Customer Churn Prediction - Bank Customer Churn Predict
 
 # Sidebar for filters
 st.sidebar.title("Filter Options")
+
+# Country Filter
 selected_country = st.sidebar.multiselect("Select Country", options=data['country'].unique(), default=data['country'].unique())
+
+# Gender Filter
 selected_gender = st.sidebar.multiselect("Select Gender", options=data['gender'].unique(), default=data['gender'].unique())
+
+# Churn Filter
 selected_churn = st.sidebar.radio("Churn Status", options=[0, 1], index=0, format_func=lambda x: "No" if x == 0 else "Yes")
 
+# Age Filter
+min_age, max_age = int(data['age'].min()), int(data['age'].max())
+age_range = st.sidebar.slider("Select Age Range", min_age, max_age, (min_age, max_age))
+
+# Credit Score Filter
+min_credit, max_credit = int(data['credit_score'].min()), int(data['credit_score'].max())
+credit_score_range = st.sidebar.slider("Select Credit Score Range", min_credit, max_credit, (min_credit, max_credit))
+
+# Balance Filter
+min_balance, max_balance = float(data['balance'].min()), float(data['balance'].max())
+balance_range = st.sidebar.slider("Select Balance Range", min_balance, max_balance, (min_balance, max_balance))
+
+# Tenure Filter
+min_tenure, max_tenure = int(data['tenure'].min()), int(data['tenure'].max())
+tenure_range = st.sidebar.slider("Select Tenure Range", min_tenure, max_tenure, (min_tenure, max_tenure))
+
 # Filter the data based on the sidebar selections
-filtered_data = data[(data['country'].isin(selected_country)) & 
-                     (data['gender'].isin(selected_gender)) & 
-                     (data['churn'] == selected_churn)]
+filtered_data = data[(data['country'].isin(selected_country)) &
+                     (data['gender'].isin(selected_gender)) &
+                     (data['churn'] == selected_churn) &
+                     (data['age'].between(age_range[0], age_range[1])) &
+                     (data['credit_score'].between(credit_score_range[0], credit_score_range[1])) &
+                     (data['balance'].between(balance_range[0], balance_range[1])) &
+                     (data['tenure'].between(tenure_range[0], tenure_range[1]))]
 
 # App Title
 st.title("Enhanced Customer Churn Dashboard")
@@ -79,11 +105,17 @@ st.subheader("Products Owned by Customers")
 products_count = filtered_data['products_number'].value_counts()
 st.bar_chart(products_count)
 
+# Balance Distribution
+st.subheader("Balance Distribution")
+fig4, ax4 = plt.subplots()
+sns.histplot(filtered_data['balance'], kde=True, ax=ax4, color='green')
+st.pyplot(fig4)
+
 # Correlation Heatmap
 st.subheader("Correlation Heatmap")
 # Select only numerical features for correlation calculation
 numerical_features = filtered_data.select_dtypes(include=['number']) 
 corr = numerical_features.corr()  # Calculate correlation on numerical columns only
-fig4, ax4 = plt.subplots(figsize=(10, 6))
-sns.heatmap(corr, annot=True, cmap='coolwarm', ax=ax4)
-st.pyplot(fig4)
+fig5, ax5 = plt.subplots(figsize=(10, 6))
+sns.heatmap(corr, annot=True, cmap='coolwarm', ax=ax5)
+st.pyplot(fig5)
